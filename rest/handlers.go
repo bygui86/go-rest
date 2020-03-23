@@ -14,8 +14,6 @@ import (
 const (
 	contentTypeHeaderKey   = "Content-Type"
 	contentTypeHeaderValue = "application/json"
-
-	postIdKey = "id"
 )
 
 func (s *Server) getPosts(writer http.ResponseWriter, request *http.Request) {
@@ -32,7 +30,8 @@ func (s *Server) createPost(writer http.ResponseWriter, request *http.Request) {
 	logging.Log.Info("CREATE post request")
 
 	setJsonContentType(writer)
-	var post Post
+	setStatusAccepted(writer)
+	var post post
 	decErr := json.NewDecoder(request.Body).Decode(&post)
 	if decErr != nil {
 		logging.SugaredLog.Errorf("Error on CREATE post request (decode request): %s", decErr.Error())
@@ -52,7 +51,7 @@ func (s *Server) getPost(writer http.ResponseWriter, request *http.Request) {
 	setJsonContentType(writer)
 	params := mux.Vars(request)
 	for _, item := range s.posts {
-		if item.ID == params[postIdKey] {
+		if item.ID == params[idKey] {
 			err := json.NewEncoder(writer).Encode(item)
 			if err != nil {
 				logging.SugaredLog.Errorf("Error on GET post request (encode response): %s", err.Error())
@@ -61,7 +60,7 @@ func (s *Server) getPost(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	err := json.NewEncoder(writer).Encode(&Post{})
+	err := json.NewEncoder(writer).Encode(&post{})
 	if err != nil {
 		logging.SugaredLog.Errorf("Error on GET post request (encode response): %s", err.Error())
 	}
@@ -71,21 +70,22 @@ func (s *Server) updatePost(writer http.ResponseWriter, request *http.Request) {
 	logging.Log.Info("UPDATE posts request")
 
 	setJsonContentType(writer)
+	setStatusAccepted(writer)
 	params := mux.Vars(request)
 	for index, item := range s.posts {
-		if item.ID == params[postIdKey] {
+		if item.ID == params[idKey] {
 			/*
 				posts[:index] >> from the beginning to index position
 				posts[index+1:]... >> from index+1 position to the end
 			*/
 			s.posts = append(s.posts[:index], s.posts[index+1:]...)
-			var post Post
+			var post post
 			decErr := json.NewDecoder(request.Body).Decode(&post)
 			if decErr != nil {
 				logging.SugaredLog.Errorf("Error on UPDATE post request (decode request): %s", decErr.Error())
 			}
 
-			post.ID = params[postIdKey]
+			post.ID = params[idKey]
 			s.posts = append(s.posts, &post)
 			encErr := json.NewEncoder(writer).Encode(&post)
 			if encErr != nil {
@@ -105,10 +105,11 @@ func (s *Server) deletePost(writer http.ResponseWriter, request *http.Request) {
 	logging.Log.Info("DELETE posts request")
 
 	setJsonContentType(writer)
+	setStatusAccepted(writer)
 	params := mux.Vars(request)
 	for index, item := range s.posts {
 
-		if item.ID == params[postIdKey] {
+		if item.ID == params[idKey] {
 			s.posts = append(s.posts[:index], s.posts[index+1:]...)
 			break
 		}
@@ -118,8 +119,4 @@ func (s *Server) deletePost(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		logging.SugaredLog.Errorf("Error on DELETE post request (encode response): %s", err.Error())
 	}
-}
-
-func setJsonContentType(writer http.ResponseWriter) {
-	writer.Header().Set(contentTypeHeaderKey, contentTypeHeaderValue)
 }

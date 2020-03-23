@@ -13,6 +13,12 @@
 build :		## Build
 	go build .
 
+unit-test :		## Run unit-tests
+	go test ./... -tags unit
+
+integr-test :		## Run integration-tests
+	go test ./... -tags integration
+
 run :		## Run
 	go run main.go
 

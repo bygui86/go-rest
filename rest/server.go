@@ -11,6 +11,18 @@ import (
 	"github.com/bygui86/go-rest/logging"
 )
 
+const (
+	idKey = "id"
+
+	routerPostsRootUrl = "/posts"
+	routerIdUrlPath    = "/{" + idKey + "}"
+
+	httpServerHostFormat          = "%s:%d"
+	httpServerWriteTimeoutDefault = time.Second * 15
+	httpServerReadTimeoutDefault  = time.Second * 15
+	httpServerIdelTimeoutDefault  = time.Second * 60
+)
+
 // NewRestServer - Create new REST server
 func NewRestServer() *Server {
 	logging.Log.Debug("Create new REST server")
@@ -18,11 +30,8 @@ func NewRestServer() *Server {
 	cfg := loadConfig()
 
 	server := &Server{
-		Config: cfg,
-		posts: []*Post{
-			{ID: "1", Title: "My first post", Body: "This is the content of my first post"},
-			{ID: "2", Title: "My second post", Body: "This is the content of my second post"},
-		},
+		config: cfg,
+		posts:  initPosts(),
 	}
 
 	server.setupRouter()
@@ -30,31 +39,31 @@ func NewRestServer() *Server {
 	return server
 }
 
-// setupRouter - Create new Gorilla mux Router
+// setupRouter - Create new Gorilla mux router
 func (s *Server) setupRouter() {
-	logging.Log.Debug("Create new Router")
+	logging.Log.Debug("Create new router")
 
-	s.Router = mux.NewRouter().StrictSlash(true)
+	s.router = mux.NewRouter().StrictSlash(true)
 
-	s.Router.HandleFunc("/posts", s.getPosts).Methods(http.MethodGet)
-	s.Router.HandleFunc("/posts", s.createPost).Methods(http.MethodPost)
-	s.Router.HandleFunc("/posts/{id}", s.getPost).Methods(http.MethodGet)
-	s.Router.HandleFunc("/posts/{id}", s.updatePost).Methods(http.MethodPut)
-	s.Router.HandleFunc("/posts/{id}", s.deletePost).Methods(http.MethodDelete)
+	s.router.HandleFunc(routerPostsRootUrl, s.getPosts).Methods(http.MethodGet)
+	s.router.HandleFunc(routerPostsRootUrl, s.createPost).Methods(http.MethodPost)
+	s.router.HandleFunc(routerPostsRootUrl+routerIdUrlPath, s.getPost).Methods(http.MethodGet)
+	s.router.HandleFunc(routerPostsRootUrl+routerIdUrlPath, s.updatePost).Methods(http.MethodPut)
+	s.router.HandleFunc(routerPostsRootUrl+routerIdUrlPath, s.deletePost).Methods(http.MethodDelete)
 }
 
 // setupHTTPServer - Create new HTTP server
 func (s *Server) setupHTTPServer() {
-	logging.SugaredLog.Debugf("Create new HTTP server on port %d", s.Config.RestPort)
+	logging.SugaredLog.Debugf("Create new HTTP server on port %d", s.config.RestPort)
 
-	if s.Config != nil {
-		s.HTTPServer = &http.Server{
-			Addr:    fmt.Sprintf("%s:%d", s.Config.RestHost, s.Config.RestPort),
-			Handler: s.Router,
+	if s.config != nil {
+		s.httpServer = &http.Server{
+			Addr:    fmt.Sprintf(httpServerHostFormat, s.config.RestHost, s.config.RestPort),
+			Handler: s.router,
 			// Good practice to set timeouts to avoid Slowloris attacks.
-			WriteTimeout: time.Second * 15,
-			ReadTimeout:  time.Second * 15,
-			IdleTimeout:  time.Second * 60,
+			WriteTimeout: httpServerWriteTimeoutDefault,
+			ReadTimeout:  httpServerReadTimeoutDefault,
+			IdleTimeout:  httpServerIdelTimeoutDefault,
 		}
 		return
 	}
@@ -66,15 +75,15 @@ func (s *Server) setupHTTPServer() {
 func (s *Server) Start() {
 	logging.Log.Info("Start REST server")
 
-	if s.HTTPServer != nil && !s.Running {
+	if s.httpServer != nil && !s.running {
 		go func() {
-			err := s.HTTPServer.ListenAndServe()
+			err := s.httpServer.ListenAndServe()
 			if err != nil {
 				logging.SugaredLog.Errorf("Error starting REST server: %s", err.Error())
 			}
 		}()
-		s.Running = true
-		logging.SugaredLog.Infof("REST server listening on port %d", s.Config.RestPort)
+		s.running = true
+		logging.SugaredLog.Infof("REST server listening on port %d", s.config.RestPort)
 		return
 	}
 
@@ -85,16 +94,16 @@ func (s *Server) Start() {
 func (s *Server) Shutdown(timeout int) {
 	logging.SugaredLog.Warnf("Shutdown REST server, timeout %d", timeout)
 
-	if s.HTTPServer != nil && s.Running {
+	if s.httpServer != nil && s.running {
 		// create a deadline to wait for.
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
 		defer cancel()
 		// does not block if no connections, otherwise wait until the timeout deadline
-		err := s.HTTPServer.Shutdown(ctx)
+		err := s.httpServer.Shutdown(ctx)
 		if err != nil {
 			logging.SugaredLog.Errorf("Error shutting down REST server: %s", err.Error())
 		}
-		s.Running = false
+		s.running = false
 		return
 	}
 

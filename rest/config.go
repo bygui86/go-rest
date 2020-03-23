@@ -1,27 +1,27 @@
 package rest
 
 import (
-	"github.com/bygui86/go-save-memory/http-server/logging"
-	"github.com/bygui86/go-save-memory/http-server/utils"
+	"github.com/bygui86/go-rest/logging"
+	"github.com/bygui86/go-rest/utils"
 )
 
 const (
 	restHostEnvVar = "REST_HOST"
 	restPortEnvVar = "REST_PORT"
 
-	restHostDefault = "localhost"
-	restPortDefault = 8080
+	restHostEnvVarDefault = "localhost"
+	restPortEnvVarDefault = 8080
 )
 
-type Config struct {
+type config struct {
 	RestHost string
 	RestPort int
 }
 
-func loadConfig() *Config {
+func loadConfig() *config {
 	logging.Log.Debug("Load REST configurations")
-	return &Config{
-		RestHost: utils.GetStringEnv(restHostEnvVar, restHostDefault),
-		RestPort: utils.GetIntEnv(restPortEnvVar, restPortDefault),
+	return &config{
+		RestHost: utils.GetStringEnv(restHostEnvVar, restHostEnvVarDefault),
+		RestPort: utils.GetIntEnv(restPortEnvVar, restPortEnvVarDefault),
 	}
 }

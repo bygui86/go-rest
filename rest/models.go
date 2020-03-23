@@ -7,14 +7,14 @@ import (
 )
 
 type Server struct {
-	Config     *Config
-	Router     *mux.Router
-	HTTPServer *http.Server
-	Running    bool
-	posts      []*Post
+	config     *config
+	router     *mux.Router
+	httpServer *http.Server
+	running    bool
+	posts      []*post
 }
 
-type Post struct {
+type post struct {
 	ID    string `json:"id"`
 	Title string `json:"title"`
 	Body  string `json:"body"`
