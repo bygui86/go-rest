@@ -55,12 +55,14 @@
 						"id": "e430729a-422b-4834-8a13-37d265da60da",
 						"exec": [
 							"",
-							"pm.test(\"Status code is 202\", function () {",
-							"    pm.response.to.have.status(202);",
-							"    ",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"if ( pm.response.to.have.status(201) ) {",
 							"    var jsonData = pm.response.json();",
 							"    pm.globals.set(\"id\", jsonData.id);",
-							"});",
+							"}",
 							""
 						],
 						"type": "text/javascript"
@@ -106,13 +108,17 @@
 			"response": []
 		},
 		{
-			"name": "Get post",
+			"name": "Get post by path",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
 						"id": "2fb6535e-e699-4655-8a9e-cb19fe35b5ea",
 						"exec": [
+							"",
+							"if ( !pm.globals.has('id') ) {",
+							"    pm.globals.set(\"id\", 1);",
+							"}",
 							""
 						],
 						"type": "text/javascript"
@@ -158,6 +164,67 @@
 			"response": []
 		},
 		{
+			"name": "Get post by query",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2fb6535e-e699-4655-8a9e-cb19fe35b5ea",
+						"exec": [
+							"",
+							"if ( !pm.globals.has('id') ) {",
+							"    pm.globals.set(\"id\", 1);",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "57d72545-69dd-4044-ae76-e930f992c326",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/posts?id={{id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"posts"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Update post",
 			"event": [
 				{
@@ -169,6 +236,20 @@
 							"pm.test(\"Status code is 202\", function () {",
 							"    pm.response.to.have.status(202);",
 							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "6fb7e2e6-ec80-479d-9b88-c3726ac029bd",
+						"exec": [
+							"",
+							"if ( !pm.globals.has('id') ) {",
+							"    pm.globals.set(\"id\", 1);",
+							"}",
 							""
 						],
 						"type": "text/javascript"
@@ -222,6 +303,10 @@
 					"script": {
 						"id": "2fb6535e-e699-4655-8a9e-cb19fe35b5ea",
 						"exec": [
+							"",
+							"if ( !pm.globals.has('id') ) {",
+							"    pm.globals.set(\"id\", 1);",
+							"}",
 							""
 						],
 						"type": "text/javascript"
@@ -235,9 +320,11 @@
 							"",
 							"pm.test(\"Status code is 202\", function () {",
 							"    pm.response.to.have.status(202);",
-							"    ",
-							"    pm.globals.unset(\"id\");",
 							"});",
+							"",
+							"if ( pm.response.to.have.status(202) ) {",
+							"    pm.globals.unset(\"id\");",
+							"}",
 							""
 						],
 						"type": "text/javascript"
@@ -263,6 +350,82 @@
 					"path": [
 						"posts",
 						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get root",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec9c4f00-6bc9-4f8e-b80c-ef46664f43f2",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get routes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec9c4f00-6bc9-4f8e-b80c-ef46664f43f2",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/routes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"routes"
 					]
 				}
 			},

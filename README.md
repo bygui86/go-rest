@@ -44,3 +44,6 @@ make run
 - https://codeburst.io/unit-testing-for-rest-apis-in-go-86c70dada52d
 - https://golang.org/src/net/http/httptest/example_test.go
 - https://stackoverflow.com/questions/42474259/golang-how-to-live-test-an-http-server
+- https://polothy.github.io/post/2019-04-13-testing-gorrilla-mux-handlers/
+- https://github.com/gorilla/mux/issues/373#issuecomment-388568971
+- https://golangcode.com/get-a-url-parameter-from-a-request/
