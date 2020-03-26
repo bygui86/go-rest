@@ -2,20 +2,23 @@ package rest
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 	"time"
-
-	"github.com/gorilla/mux"
 
 	"github.com/bygui86/go-rest/logging"
 )
 
 const (
-	idKey = "id"
+	idKey   = "id"
+	idValue = "{" + idKey + ":[0-9]+}"
 
-	routerPostsRootUrl = "/posts"
-	routerIdUrlPath    = "/{" + idKey + "}"
+	urlSeparator       = "/"
+	routerRootUrl      = urlSeparator
+	routerPostsUrl     = "posts"
+	routerPostsRootUrl = routerRootUrl + routerPostsUrl
+	routerIdUrlPath    = urlSeparator + idValue
+	routerRoutesUrl    = "routes"
+	// routerRoutesRootUrl = routerRootUrl + routerRoutesUrl
+	routerRoutesRootUrl = "/routes"
 
 	httpServerHostFormat          = "%s:%d"
 	httpServerWriteTimeoutDefault = time.Second * 15
@@ -32,43 +35,12 @@ func NewRestServer() *Server {
 	server := &Server{
 		config: cfg,
 		posts:  initPosts(),
+		routes: initRoutes(),
 	}
 
 	server.setupRouter()
 	server.setupHTTPServer()
 	return server
-}
-
-// setupRouter - Create new Gorilla mux router
-func (s *Server) setupRouter() {
-	logging.Log.Debug("Create new router")
-
-	s.router = mux.NewRouter().StrictSlash(true)
-
-	s.router.HandleFunc(routerPostsRootUrl, s.getPosts).Methods(http.MethodGet)
-	s.router.HandleFunc(routerPostsRootUrl, s.createPost).Methods(http.MethodPost)
-	s.router.HandleFunc(routerPostsRootUrl+routerIdUrlPath, s.getPost).Methods(http.MethodGet)
-	s.router.HandleFunc(routerPostsRootUrl+routerIdUrlPath, s.updatePost).Methods(http.MethodPut)
-	s.router.HandleFunc(routerPostsRootUrl+routerIdUrlPath, s.deletePost).Methods(http.MethodDelete)
-}
-
-// setupHTTPServer - Create new HTTP server
-func (s *Server) setupHTTPServer() {
-	logging.SugaredLog.Debugf("Create new HTTP server on port %d", s.config.RestPort)
-
-	if s.config != nil {
-		s.httpServer = &http.Server{
-			Addr:    fmt.Sprintf(httpServerHostFormat, s.config.RestHost, s.config.RestPort),
-			Handler: s.router,
-			// Good practice to set timeouts to avoid Slowloris attacks.
-			WriteTimeout: httpServerWriteTimeoutDefault,
-			ReadTimeout:  httpServerReadTimeoutDefault,
-			IdleTimeout:  httpServerIdelTimeoutDefault,
-		}
-		return
-	}
-
-	logging.Log.Error("HTTP server creation failed: REST server configurations not initialized")
 }
 
 // Start - Start REST server
