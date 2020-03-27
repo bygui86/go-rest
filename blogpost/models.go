@@ -1,4 +1,4 @@
-package rest
+package blogpost
 
 import (
 	"net/http"
@@ -11,11 +11,11 @@ type Server struct {
 	router     *mux.Router
 	httpServer *http.Server
 	running    bool
-	posts      []*post
+	blogPosts  []*blogPost
 	routes     []*serverRoute
 }
 
-type post struct {
+type blogPost struct {
 	ID    string `json:"id"`
 	Title string `json:"title"`
 	Body  string `json:"body"`

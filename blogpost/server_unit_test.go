@@ -1,6 +1,6 @@
 // +build unit
 
-package rest
+package blogpost
 
 import (
 	"testing"
@@ -16,7 +16,7 @@ func TestNewRestServer(t *testing.T) {
 	assert.NotNil(t, server.config)
 	assert.NotNil(t, server.router)
 	assert.NotNil(t, server.httpServer)
-	assert.NotNil(t, server.posts)
+	assert.NotNil(t, server.blogPosts)
 	assert.Equal(t, false, server.running)
 }
 

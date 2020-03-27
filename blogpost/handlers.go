@@ -1,4 +1,4 @@
-package rest
+package blogpost
 
 import (
 	"encoding/json"
@@ -16,15 +16,15 @@ const (
 	errorMessageFormat         = "Error on %s (%s): %s"
 	errorEncodeResponseMessage = "encode response"
 	errorDecodeResponseMessage = "decode request"
-	errorPostNotFoundMessage   = "post not found"
+	errorPostNotFoundMessage   = "BlogPost not found"
 )
 
-func (s *Server) getPosts(writer http.ResponseWriter, request *http.Request) {
-	requestStr := "GET posts request"
+func (s *Server) getBlogPosts(writer http.ResponseWriter, request *http.Request) {
+	requestStr := "GET BlogPosts request"
 	logging.Log.Info(requestStr)
 
 	setJsonContentType(writer)
-	err := json.NewEncoder(writer).Encode(s.posts)
+	err := json.NewEncoder(writer).Encode(s.blogPosts)
 	if err != nil {
 		logging.SugaredLog.Errorf(errorMessageFormat, requestStr, errorEncodeResponseMessage, err.Error())
 		setStatusInternalServerError(writer)
@@ -32,8 +32,8 @@ func (s *Server) getPosts(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func (s *Server) getPostByPath(writer http.ResponseWriter, request *http.Request) {
-	requestStr := "GET post request by path-var"
+func (s *Server) getBlogPostByPath(writer http.ResponseWriter, request *http.Request) {
+	requestStr := "GET BlogPost request by path-var"
 	logging.Log.Info(requestStr)
 
 	pathVars := mux.Vars(request)
@@ -45,8 +45,8 @@ func (s *Server) getPostByPath(writer http.ResponseWriter, request *http.Request
 		return
 	}
 
-	logging.SugaredLog.Infof("Searching for post by id %s", pathVars[idKey])
-	for _, item := range s.posts {
+	logging.SugaredLog.Infof("Searching for BlogPost by id %s", pathVars[idKey])
+	for _, item := range s.blogPosts {
 		if item.ID == pathVars[idKey] {
 			setJsonContentType(writer)
 			err := json.NewEncoder(writer).Encode(item)
@@ -65,8 +65,8 @@ func (s *Server) getPostByPath(writer http.ResponseWriter, request *http.Request
 	s.returnErrorResponse(writer, requestStr, errorPostNotFoundMessage)
 }
 
-func (s *Server) getPostByQuery(writer http.ResponseWriter, request *http.Request) {
-	requestStr := "GET post by query request"
+func (s *Server) getBlogPostByQuery(writer http.ResponseWriter, request *http.Request) {
+	requestStr := "GET BlogPost by query request"
 	logging.Log.Info(requestStr)
 
 	id, queryErr := s.getIdFromQueryParams(request)
@@ -77,8 +77,8 @@ func (s *Server) getPostByQuery(writer http.ResponseWriter, request *http.Reques
 		return
 	}
 
-	logging.SugaredLog.Infof("Searching for post by id %s", id)
-	for _, item := range s.posts {
+	logging.SugaredLog.Infof("Searching for BlogPost by id %s", id)
+	for _, item := range s.blogPosts {
 		if item.ID == id {
 			setJsonContentType(writer)
 			encodeErr := json.NewEncoder(writer).Encode(item)
@@ -97,11 +97,11 @@ func (s *Server) getPostByQuery(writer http.ResponseWriter, request *http.Reques
 	s.returnErrorResponse(writer, requestStr, errorPostNotFoundMessage)
 }
 
-func (s *Server) createPost(writer http.ResponseWriter, request *http.Request) {
-	requestStr := "CREATE post request"
+func (s *Server) createBlogPost(writer http.ResponseWriter, request *http.Request) {
+	requestStr := "CREATE BlogPost request"
 	logging.Log.Info(requestStr)
 
-	var post post
+	var post blogPost
 	decErr := json.NewDecoder(request.Body).Decode(&post)
 	if decErr != nil {
 		logging.SugaredLog.Errorf(errorMessageFormat, requestStr, errorDecodeResponseMessage, decErr.Error())
@@ -111,7 +111,7 @@ func (s *Server) createPost(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	post.ID = strconv.Itoa(rand.Intn(1000000))
-	s.posts = append(s.posts, &post)
+	s.blogPosts = append(s.blogPosts, &post)
 
 	setJsonContentType(writer)
 	setStatusCreated(writer)
@@ -123,19 +123,27 @@ func (s *Server) createPost(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func (s *Server) updatePost(writer http.ResponseWriter, request *http.Request) {
-	requestStr := "UPDATE posts request"
+func (s *Server) updateBlogPost(writer http.ResponseWriter, request *http.Request) {
+	requestStr := "UPDATE BlogPosts request"
 	logging.Log.Info(requestStr)
 
-	params := mux.Vars(request)
-	for index, item := range s.posts {
-		if item.ID == params[idKey] {
+	pathVars := mux.Vars(request)
+	if pathVars[idKey] == "" {
+		errMsg := fmt.Sprintf("%s not found in URL", idKey)
+		logging.SugaredLog.Errorf(errorMessageFormat, requestStr, "retrieve path var", errMsg)
+		setStatusBadRequest(writer)
+		s.returnErrorResponse(writer, requestStr, errMsg)
+		return
+	}
+
+	for index, item := range s.blogPosts {
+		if item.ID == pathVars[idKey] {
 			/*
-				posts[:index] >> from the beginning to index position
-				posts[index+1:]... >> from index+1 position to the end
+				blogPosts[:index] >> from the beginning to index position
+				blogPosts[index+1:]... >> from index+1 position to the end
 			*/
-			s.posts = append(s.posts[:index], s.posts[index+1:]...)
-			var post post
+			s.blogPosts = append(s.blogPosts[:index], s.blogPosts[index+1:]...)
+			var post blogPost
 			decErr := json.NewDecoder(request.Body).Decode(&post)
 			if decErr != nil {
 				logging.SugaredLog.Errorf(errorMessageFormat, requestStr, errorDecodeResponseMessage, decErr.Error())
@@ -144,8 +152,8 @@ func (s *Server) updatePost(writer http.ResponseWriter, request *http.Request) {
 				return
 			}
 
-			post.ID = params[idKey]
-			s.posts = append(s.posts, &post)
+			post.ID = pathVars[idKey]
+			s.blogPosts = append(s.blogPosts, &post)
 
 			setJsonContentType(writer)
 			setStatusAccepted(writer)
@@ -161,21 +169,29 @@ func (s *Server) updatePost(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	setStatusNotFound(writer)
+	s.returnErrorResponse(writer, requestStr, errorPostNotFoundMessage)
 }
 
-func (s *Server) deletePost(writer http.ResponseWriter, request *http.Request) {
-	requestStr := "DELETE posts request"
+func (s *Server) deleteBlogPost(writer http.ResponseWriter, request *http.Request) {
+	requestStr := "DELETE BlogPosts request"
 	logging.Log.Info(requestStr)
 
-	params := mux.Vars(request)
-	for index, item := range s.posts {
-		if item.ID == params[idKey] {
-			s.posts = append(s.posts[:index], s.posts[index+1:]...)
+	pathVars := mux.Vars(request)
+	if pathVars[idKey] == "" {
+		errMsg := fmt.Sprintf("%s not found in URL", idKey)
+		logging.SugaredLog.Errorf(errorMessageFormat, requestStr, "retrieve path var", errMsg)
+		setStatusBadRequest(writer)
+		s.returnErrorResponse(writer, requestStr, errMsg)
+		return
+	}
+
+	for index, item := range s.blogPosts {
+		if item.ID == pathVars[idKey] {
+			s.blogPosts = append(s.blogPosts[:index], s.blogPosts[index+1:]...)
 			break
 		}
 	}
 
-	setJsonContentType(writer)
 	setStatusAccepted(writer)
 }
 
@@ -183,7 +199,7 @@ func (s *Server) getRoot(writer http.ResponseWriter, request *http.Request) {
 	requestStr := "GET root request"
 	logging.Log.Info(requestStr)
 
-	_, err := writer.Write([]byte("Welcome to go-rest sample project"))
+	_, err := writer.Write([]byte(rootMessage))
 	if err != nil {
 		logging.SugaredLog.Errorf(errorMessageFormat, requestStr, "write string response", err.Error())
 		setStatusInternalServerError(writer)

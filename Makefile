@@ -10,17 +10,24 @@
 
 # ACTIONS
 
-build :		## Build
-	go build .
+build :		## Build application
+	export GO111MODULE=on && \
+	go build
 
 unit-test :		## Run unit-tests
+	export GO111MODULE=on && \
 	go test ./... -tags unit
 
 integr-test :		## Run integration-tests
+	export GO111MODULE=on && \
 	go test ./... -tags integration
 
-run :		## Run
+run :		## Run application from source code
+	export GO111MODULE=on && \
 	go run main.go
+
+run-binary :		## Run application from binary
+	./go-rest
 
 ## helpers
 

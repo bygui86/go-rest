@@ -1,6 +1,6 @@
 // +build unit
 
-package rest
+package blogpost
 
 import (
 	"testing"
@@ -8,11 +8,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBuildPost(t *testing.T) {
+func TestBuildBlogPost(t *testing.T) {
 	id := "42"
 	title := "some title"
 	body := "some body"
-	post := buildPost(id, title, body)
+	post := buildBlogPost(id, title, body)
 
 	assert.Equal(t, id, post.ID)
 	assert.Equal(t, title, post.Title)
@@ -20,7 +20,7 @@ func TestBuildPost(t *testing.T) {
 }
 
 func TestBuildErrorResponse(t *testing.T) {
-	request := "GET posts"
+	request := "GET BlogPosts"
 	errorMsg := "marshal error"
 	errResp := buildErrorResponse(request, errorMsg)
 

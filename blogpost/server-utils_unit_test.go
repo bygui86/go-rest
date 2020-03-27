@@ -1,6 +1,6 @@
 // +build unit
 
-package rest
+package blogpost
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInitPost(t *testing.T) {
-	posts := initPosts()
+func TestInitBlogPost(t *testing.T) {
+	posts := initBlogPosts()
 
 	assert.NotNil(t, posts)
 	assert.Equal(t, 2, len(posts))
@@ -29,9 +29,9 @@ func TestSetupRouter(t *testing.T) {
 	cfg := loadConfig()
 	server := &Server{
 		config: cfg,
-		posts: []*post{
-			{ID: "1", Title: "My first post", Body: "This is the content of my first post"},
-			{ID: "2", Title: "My second post", Body: "This is the content of my second post"},
+		blogPosts: []*blogPost{
+			{ID: "1", Title: "My first BlogPost", Body: "This is the content of my first BlogPost"},
+			{ID: "2", Title: "My second BlogPost", Body: "This is the content of my second BlogPost"},
 		},
 	}
 	server.setupRouter()
@@ -43,9 +43,9 @@ func TestSetupHttpServer(t *testing.T) {
 	cfg := loadConfig()
 	server := &Server{
 		config: cfg,
-		posts: []*post{
-			{ID: "1", Title: "My first post", Body: "This is the content of my first post"},
-			{ID: "2", Title: "My second post", Body: "This is the content of my second post"},
+		blogPosts: []*blogPost{
+			{ID: "1", Title: "My first BlogPost", Body: "This is the content of my first BlogPost"},
+			{ID: "2", Title: "My second BlogPost", Body: "This is the content of my second BlogPost"},
 		},
 	}
 	server.setupRouter()

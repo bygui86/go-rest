@@ -1,4 +1,4 @@
-package rest
+package blogpost
 
 import (
 	"context"
@@ -11,14 +11,13 @@ const (
 	idKey   = "id"
 	idValue = "{" + idKey + ":[0-9]+}"
 
-	urlSeparator       = "/"
-	routerRootUrl      = urlSeparator
-	routerPostsUrl     = "posts"
-	routerPostsRootUrl = routerRootUrl + routerPostsUrl
-	routerIdUrlPath    = urlSeparator + idValue
-	routerRoutesUrl    = "routes"
-	// routerRoutesRootUrl = routerRootUrl + routerRoutesUrl
-	routerRoutesRootUrl = "/routes"
+	urlSeparator        = "/"
+	routerRootUrl       = urlSeparator
+	routerPostsUrl      = "blogPosts"
+	routerPostsRootUrl  = routerRootUrl + routerPostsUrl
+	routerIdUrlPath     = urlSeparator + idValue
+	routerRoutesUrl     = "routes"
+	routerRoutesRootUrl = routerRootUrl + routerRoutesUrl
 
 	httpServerHostFormat          = "%s:%d"
 	httpServerWriteTimeoutDefault = time.Second * 15
@@ -33,9 +32,9 @@ func NewRestServer() *Server {
 	cfg := loadConfig()
 
 	server := &Server{
-		config: cfg,
-		posts:  initPosts(),
-		routes: initRoutes(),
+		config:    cfg,
+		blogPosts: initBlogPosts(),
+		routes:    initRoutes(),
 	}
 
 	server.setupRouter()

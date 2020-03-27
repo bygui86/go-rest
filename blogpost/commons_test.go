@@ -1,4 +1,4 @@
-package rest
+package blogpost
 
 import (
 	"encoding/json"
@@ -46,35 +46,49 @@ func checkGetPostsResponseForTesting(t *testing.T, response *http.Response, resp
 	assert.Nil(t, respBodyErr)
 	assert.NotNil(t, responseBody)
 
-	var posts []*post
+	var posts []*blogPost
 	unmarshErr := json.Unmarshal(responseBody, &posts)
 	assert.Nil(t, unmarshErr)
 	assert.NotNil(t, posts)
-	assert.Equal(t, len(server.posts), len(posts))
+	assert.Equal(t, len(server.blogPosts), len(posts))
 
-	expectedPost1 := server.posts[0]
+	expectedPost1 := server.blogPosts[0]
 	assert.Equal(t, expectedPost1.ID, posts[0].ID)
 	assert.Equal(t, expectedPost1.Title, posts[0].Title)
 	assert.Equal(t, expectedPost1.Body, posts[0].Body)
-	expectedPost2 := server.posts[1]
+	expectedPost2 := server.blogPosts[1]
 	assert.Equal(t, expectedPost2.ID, posts[1].ID)
 	assert.Equal(t, expectedPost2.Title, posts[1].Title)
 	assert.Equal(t, expectedPost2.Body, posts[1].Body)
 }
 
-func checkGetPostResponseForTesting(t *testing.T, response *http.Response, expectedPost *post) {
+func checkGetPostResponseForTesting(t *testing.T, response *http.Response, expectedPost *blogPost, verifyId bool) {
 	defer closeResponseBodyForTesting(t, response.Body)
 	responseBody, respBodyErr := ioutil.ReadAll(response.Body)
 	assert.Nil(t, respBodyErr)
 	assert.NotNil(t, responseBody)
 
-	var post *post
+	var post *blogPost
 	unmarshErr := json.Unmarshal(responseBody, &post)
 	assert.Nil(t, unmarshErr)
-
 	assert.NotNil(t, post)
-
-	assert.Equal(t, expectedPost.ID, post.ID)
+	if verifyId {
+		assert.Equal(t, expectedPost.ID, post.ID)
+	}
 	assert.Equal(t, expectedPost.Title, post.Title)
 	assert.Equal(t, expectedPost.Body, post.Body)
+}
+
+func checkErrorResponseForTesting(t *testing.T, response *http.Response, expectedErrorResponse *errorResponse) {
+	defer closeResponseBodyForTesting(t, response.Body)
+	responseBody, respBodyErr := ioutil.ReadAll(response.Body)
+	assert.Nil(t, respBodyErr)
+	assert.NotNil(t, responseBody)
+
+	var errorResponse *errorResponse
+	unmarshErr := json.Unmarshal(responseBody, &errorResponse)
+	assert.Nil(t, unmarshErr)
+	assert.NotNil(t, errorResponse)
+	assert.Equal(t, expectedErrorResponse.Request, errorResponse.Request)
+	assert.Equal(t, expectedErrorResponse.Message, errorResponse.Message)
 }

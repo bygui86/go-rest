@@ -1,4 +1,4 @@
-package rest
+package blogpost
 
 import (
 	"encoding/json"
@@ -10,8 +10,8 @@ import (
 	"github.com/bygui86/go-rest/logging"
 )
 
-func buildPost(id, title, body string) *post {
-	return &post{ID: id, Title: title, Body: body}
+func buildBlogPost(id, title, body string) *blogPost {
+	return &blogPost{ID: id, Title: title, Body: body}
 }
 
 func buildErrorResponse(request string, errorMsg string) *errorResponse {

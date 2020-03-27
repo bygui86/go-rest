@@ -6,30 +6,30 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bygui86/go-rest/blogpost"
 	"github.com/bygui86/go-rest/logging"
-	"github.com/bygui86/go-rest/rest"
 )
 
 func main() {
 	logging.Log.Info("Start go-rest")
 
-	restServer := startRestServer()
+	blogPostServer := startBlogPostServer()
 
 	logging.Log.Info("go-rest up&running")
 
 	startSysCallChannel()
 
-	shutdownAndWait(restServer, 3)
+	shutdownAndWait(blogPostServer, 3)
 }
 
-func startRestServer() *rest.Server {
-	logging.Log.Debug("Start REST server")
+func startBlogPostServer() *blogpost.Server {
+	logging.Log.Debug("Start BlogPost server")
 
-	server := rest.NewRestServer()
-	logging.Log.Debug("REST server successfully created")
+	server := blogpost.NewRestServer()
+	logging.Log.Debug("BlogPost server successfully created")
 
 	server.Start()
-	logging.Log.Debug("REST server successfully started")
+	logging.Log.Debug("BlogPost server successfully started")
 
 	return server
 }
@@ -40,7 +40,7 @@ func startSysCallChannel() {
 	<-syscallCh
 }
 
-func shutdownAndWait(restServer *rest.Server, timeout int) {
+func shutdownAndWait(restServer *blogpost.Server, timeout int) {
 	logging.SugaredLog.Warnf("Termination signal received! Timeout %d", timeout)
 	restServer.Shutdown(timeout)
 	time.Sleep(time.Duration(timeout+1) * time.Second)

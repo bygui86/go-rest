@@ -1,6 +1,6 @@
 // +build unit
 
-package rest
+package blogpost
 
 import (
 	"os"

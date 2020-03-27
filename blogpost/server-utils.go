@@ -1,4 +1,4 @@
-package rest
+package blogpost
 
 import (
 	"fmt"
@@ -11,18 +11,18 @@ import (
 
 const (
 	post1_id    = "1"
-	post1_title = "My first post"
-	post1_body  = "This is the content of my first post"
+	post1_title = "My first BlogPost"
+	post1_body  = "This is the content of my first BlogPost"
 
 	post2_id    = "2"
-	post2_title = "My second post"
-	post2_body  = "This is the content of my second post"
+	post2_title = "My second BlogPost"
+	post2_body  = "This is the content of my second BlogPost"
 )
 
-func initPosts() []*post {
-	return []*post{
-		buildPost(post1_id, post1_title, post1_body),
-		buildPost(post2_id, post2_title, post2_body),
+func initBlogPosts() []*blogPost {
+	return []*blogPost{
+		buildBlogPost(post1_id, post1_title, post1_body),
+		buildBlogPost(post2_id, post2_title, post2_body),
 	}
 }
 
@@ -36,18 +36,18 @@ func (s *Server) setupRouter() {
 
 	s.router = mux.NewRouter().StrictSlash(true)
 
-	// posts
-	s.addRoute(routerPostsRootUrl, s.getPostByQuery, http.MethodGet,
+	// blogPosts
+	s.addRoute(routerPostsRootUrl, s.getBlogPostByQuery, http.MethodGet,
 		true, false, map[string]string{idKey: idValue})
-	s.addRoute(routerPostsRootUrl, s.getPosts, http.MethodGet,
+	s.addRoute(routerPostsRootUrl, s.getBlogPosts, http.MethodGet,
 		true, false, nil)
-	s.addRoute(routerPostsRootUrl, s.createPost, http.MethodPost,
+	s.addRoute(routerPostsRootUrl, s.createBlogPost, http.MethodPost,
 		true, true, nil)
-	s.addRoute(routerPostsRootUrl+routerIdUrlPath, s.getPostByPath, http.MethodGet,
+	s.addRoute(routerPostsRootUrl+routerIdUrlPath, s.getBlogPostByPath, http.MethodGet,
 		true, false, nil)
-	s.addRoute(routerPostsRootUrl+routerIdUrlPath, s.updatePost, http.MethodPut,
+	s.addRoute(routerPostsRootUrl+routerIdUrlPath, s.updateBlogPost, http.MethodPut,
 		true, true, nil)
-	s.addRoute(routerPostsRootUrl+routerIdUrlPath, s.deletePost, http.MethodDelete,
+	s.addRoute(routerPostsRootUrl+routerIdUrlPath, s.deleteBlogPost, http.MethodDelete,
 		true, false, nil)
 
 	// routes
