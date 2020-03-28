@@ -13,11 +13,6 @@ const (
 	restPortEnvVarDefault = 8080
 )
 
-type config struct {
-	RestHost string
-	RestPort int
-}
-
 func loadConfig() *config {
 	logging.Log.Debug("Load configurations")
 	return &config{

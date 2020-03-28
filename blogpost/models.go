@@ -6,6 +6,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type config struct {
+	RestHost string
+	RestPort int
+}
+
 type Server struct {
 	config     *config
 	router     *mux.Router
