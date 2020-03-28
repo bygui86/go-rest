@@ -65,21 +65,43 @@ see https://github.com/prometheus/client_golang/blob/master/prometheus/examples_
 ---
 
 ## Links
+
 ### REST
 - [x] https://medium.com/@hugo.bjarred/rest-api-with-golang-and-mux-e934f581b8b5
 - [x] https://golangcode.com/get-a-url-parameter-from-a-request/
+
 ### PostgreSQL
 - [ ] https://semaphoreci.com/community/tutorials/building-and-testing-a-rest-api-in-go-with-gorilla-mux-and-postgresql
+
+### Testing frameworks
+- [x] https://github.com/stretchr/testify
+- [ ] https://onsi.github.io/ginkgo/
+- [ ] https://onsi.github.io/gomega/
+- [ ] https://github.com/golang/mock
+- [ ] https://github.com/vektra/mockery
+- [ ] http://labix.org/gocheck
+
 ### Unit-testing
 - [x] https://codeburst.io/unit-testing-for-rest-apis-in-go-86c70dada52d
 - [x] https://golang.org/src/net/http/httptest/example_test.go
 - [x] https://github.com/gorilla/mux/issues/373#issuecomment-388568971
+
 ### Integration-testing
 - [x] https://stackoverflow.com/questions/42474259/golang-how-to-live-test-an-http-server
 - [x] https://polothy.github.io/post/2019-04-13-testing-gorrilla-mux-handlers/
 - [ ] https://medium.com/@victorsteven/understanding-unit-and-integrationtesting-in-golang-ba60becb778d
 - [ ] https://www.ardanlabs.com/blog/2019/03/integration-testing-in-go-executing-tests-with-docker.html
 - [ ] https://www.ardanlabs.com/blog/2019/10/integration-testing-in-go-set-up-and-writing-tests.html
+- [ ] https://github.com/testcontainers/testcontainers-go
+
 ### Smoke-testing (a.k.a. Build Verification testing)
 - [ ] https://medium.com/@felipedutratine/smoke-tests-easily-a008e1e67d50
 - [ ] https://www.slideshare.net/alexeygolubev10/smoke-testing-with-go
+
+### Contract-testing
+- [ ] https://www.youtube.com/watch?v=-6x6XBDf9sQ
+- [ ] https://pkg.go.dev/github.com/pact-foundation/pact-go?tab=doc
+- [ ] https://github.com/pact-foundation/pact-workshop-go
+
+### Code coverage
+- [ ] https://stackoverflow.com/questions/10516662/how-to-measure-code-coverage-in-golang
