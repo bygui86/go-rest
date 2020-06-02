@@ -33,14 +33,14 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/posts",
+					"raw": "http://localhost:8080/blogPosts",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"posts"
+						"blogPosts"
 					]
 				}
 			},
@@ -94,14 +94,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/posts",
+					"raw": "http://localhost:8080/blogPosts",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"posts"
+						"blogPosts"
 					]
 				}
 			},
@@ -149,14 +149,14 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/posts/{{id}}",
+					"raw": "http://localhost:8080/blogPosts/{{id}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"posts",
+						"blogPosts",
 						"{{id}}"
 					]
 				}
@@ -205,14 +205,14 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/posts?id={{id}}",
+					"raw": "http://localhost:8080/blogPosts?id={{id}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"posts"
+						"blogPosts"
 					],
 					"query": [
 						{
@@ -281,14 +281,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/posts/{{id}}",
+					"raw": "http://localhost:8080/blogPosts/{{id}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"posts",
+						"blogPosts",
 						"{{id}}"
 					]
 				}
@@ -341,14 +341,14 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/posts/{{id}}",
+					"raw": "http://localhost:8080/blogPosts/{{id}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"posts",
+						"blogPosts",
 						"{{id}}"
 					]
 				}
